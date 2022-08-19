@@ -27,16 +27,30 @@ namespace AdoNetCodingConectado
 
         private void cargarDatos()
         {
-            var conexion = new SqlConnection(cadenaConexion);
-            conexion.Open();
-            var sql = "SELECT * FROM TipoCliente";
-            var command = new SqlCommand(sql, conexion);
-            var lector = command.ExecuteReader();
-            while (lector.Read())
+            using (var conexion = new SqlConnection(cadenaConexion))
             {
-                cboTipo.Items.Add(lector[1].ToString());
+                conexion.Open();
+                var sql = "SELECT * FROM TipoCliente";
+                var comando = new SqlCommand(sql, conexion);
+                var lector = comando.ExecuteReader();
+                if(lector != null && lector.HasRows)
+                {
+                    Dictionary<string, string> tipoClienteSource = new Dictionary<string, string>();
+                    while (lector.Read())
+                    {
+                        tipoClienteSource.Add(lector[0].ToString(), lector[1].ToString());
+                    }
+                    cboTipo.DataSource = new BindingSource(tipoClienteSource, null);
+                    cboTipo.DisplayMember = "Value";
+                    cboTipo.ValueMember = "Key";
+                }                
             }
-            conexion.Close();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            var value = cboTipo.SelectedValue;
+            MessageBox.Show(value.ToString());
         }
     }
 }
