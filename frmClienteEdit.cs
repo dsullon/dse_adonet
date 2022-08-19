@@ -75,8 +75,7 @@ namespace AdoNetCodingConectado
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            var value = cboTipo.SelectedValue;
-            MessageBox.Show(value.ToString());
+            this.DialogResult = DialogResult.OK;
         }
     }
 }
