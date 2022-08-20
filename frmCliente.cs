@@ -43,11 +43,42 @@ namespace AdoNetCodingConectado
                         {
                             MessageBox.Show("El cliente ha sido registrado", "Sistemas", 
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            cargarDatos();
                         }
                         else
                         {
                             MessageBox.Show("El proceso de creación del cliente ha fallado.", "Sistemas",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void iniciarFormulario(object sender, EventArgs e)
+        {
+            cargarDatos();
+        }
+
+        private void cargarDatos()
+        {
+            dgvListado.Rows.Clear();
+            using(var conexion = new SqlConnection(cadenaConexion))
+            {
+                conexion.Open();
+                var sql = "SELECT A.ID, Nombres + ' ' + Apellidos AS Nombre_Cliente, " +
+                    "B.Nombre AS Tipo_Cliente FROM Cliente A " +
+                    "INNER JOIN TipoCliente B ON A.IdTipoCliente = B.ID";
+                using(var comando = new SqlCommand(sql, conexion))
+                {
+                    using(var lector = comando.ExecuteReader())
+                    {
+                        if(lector != null && lector.HasRows)
+                        {
+                            while (lector.Read())
+                            {
+                                dgvListado.Rows.Add(lector[0], lector[1], lector[2]);
+                            }
                         }
                     }
                 }
